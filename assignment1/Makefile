@@ -1,18 +1,21 @@
-# Simple Makefile for 6.837 assignment 0
+# Simple Makefile for 6.837 raycasting assignment
 # for g++ on linux platforms
 
 # ===============================================================
 
 SRCS 	 	= main.cpp \
 		  ../headers/matrix.cpp \
-		  ../headers/image.cpp 
+		  ../headers/image.cpp \
+		  scene_parser.cpp \
+		  ../headers/objects/sphere.cpp \
+		  ../headers/camera.cpp \
+		  ../headers/objects/group.cpp
 
 # ===============================================================
 
-LIBS            = -lm 
+LIBS            = -lm -L/usr/X11R6/lib
 CC		= g++
-INCLUDE 	= -I/usr/include 
-EXE 	  	= ifs
+EXE	  	= raytracer
 OBJS =  $(SRCS:.C=.o)
 
 # ===============================================================
@@ -20,13 +23,13 @@ OBJS =  $(SRCS:.C=.o)
 
 .PHONY: all depend clean
 
-all: depend $(EXE) 
+all: depend $(EXE)
 
 depend:
-	$(CC) -E -M $(INCLUDE) $(SRCS) > Makefile.depend
+	$(CC) -E -M $(SRCS) > Makefile.depend
 
 clean: 
-	rm -f *~ *bak *.o  $(EXE) Makefile.depend
+	-rm -f *~ *bak *.o  core.* Makefile.depend $(EXE) 
 
 # ===============================================================
 # compilation rules
@@ -37,8 +40,9 @@ $(EXE): $(OBJS)
 .C.o:
 	$(CC) $< -c -o $@
 
+.cpp.o:
+	$(CC) $< -c -o $@
+
 # ===============================================================
 
 -include Makefile.depend
-
-# DO NOT DELETE

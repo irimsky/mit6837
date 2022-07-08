@@ -9,14 +9,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "matrix.hpp"
-#include "image.hpp"
+#include "../headers/matrix.hpp"
+#include "../headers/image.hpp"
 
 
 char *input_file = NULL;
 int num_points = 10000;
 int num_iters = 10;
-int size = 100;
+int image_size = 100;
 char *output_file = NULL;
 
 int main(int argc, char* argv[])
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
             num_iters = atoi(argv[i]);
         } else if (!strcmp(argv[i],"-size")) {
             i++; assert (i < argc); 
-            size = atoi(argv[i]);
+            image_size = atoi(argv[i]);
         } else if (!strcmp(argv[i],"-output")) {
             i++; assert (i < argc); 
             output_file = argv[i];
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
     }
 
     srand(time(NULL));
-    Image* res = new Image(size, size);
+    Image* res = new Image(image_size, image_size);
     res->SetAllPixels(Vec3f(1, 1, 1));
     for(int i = 0;i < num_points;++i)
     {
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
             vec /= vec.w();
         }
         if(vec.x() >= 0 && vec.x() < 1 && vec.y() >= 0 && vec.y() < 1)
-            res->SetPixel(vec.x() * size, vec.y() * size, Vec3f(0, 0, 0));
+            res->SetPixel(vec.x() * image_size, vec.y() * image_size, Vec3f(0, 0, 0));
     }
     res->SaveTGA(output_file);
     // close the file
