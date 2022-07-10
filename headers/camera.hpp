@@ -28,6 +28,11 @@ public:
         this->size = size;
     }
 
+    Vec3f getCenter()
+    {
+        return this->center;
+    }
+
     virtual Ray generateRay(Vec2f point);
 
     virtual float getTMin() const 
@@ -40,6 +45,35 @@ private:
     Vec3f direction;
     Vec3f up;
     float size;
+};
+
+class PerspectiveCamera : public Camera
+{
+    // for a perspective camera, the field of view is specified with an angle
+    float angle;
+public:
+    PerspectiveCamera(Vec3f& center, Vec3f& direction, Vec3f& up, float angle)
+    {
+        fov = angle;
+        this->center = center;
+        this->direction = direction; this->direction.Normalize();
+        this->up = up; this->up.Normalize();
+    }
+
+    ~PerspectiveCamera();
+
+    virtual Ray generateRay(Vec2f point);
+
+    virtual float getTMin() const
+    {
+        return 0;
+    }
+    
+private:
+    Vec3f center;
+    Vec3f direction;
+    Vec3f up;
+    float fov;
 };
 
 #endif

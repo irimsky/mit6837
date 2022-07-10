@@ -8,6 +8,8 @@
 #include "../headers/objects/object3D.hpp"
 #include "../headers/objects/group.hpp"
 #include "../headers/objects/sphere.hpp"
+#include "../headers/objects/transform.hpp"
+
 
 #define DegreesToRadians(x) ((M_PI * x) / 180.0f)
 

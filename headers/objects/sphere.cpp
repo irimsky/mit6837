@@ -33,12 +33,14 @@ bool Sphere::intersect(const Ray &r, Hit &h, float tmin)
     else if(t1 >= tmin) t = t1;
     else return false;
 
-    std::cout << t << std::endl;
+    //std::cout << t << std::endl;
 
     if (t < h.getT()){
-        h.set(t, this->material, r);
-        std::cout << "update Hit" << std::endl;
-        std::cout << h << std::endl;
+        Vec3f n = r.pointAtParameter(t) - center;
+        n.Normalize();
+        h.set(t, this->material, n, r);
+        //std::cout << "update Hit" << std::endl;
+        //std::cout << h << std::endl;
         return true;
     }
     return false;
