@@ -9,7 +9,8 @@ using namespace std;
 class Sphere : public Object3D {
 public:
     virtual bool intersect(const Ray &r, Hit &h, float tmin);
-
+    virtual void paint();
+    
     Sphere() { radius = 0; center = Vec3f(0, 0, 0); }
     Sphere(Vec3f c, float r, Material* m) { 
         radius = r; center = c; material = m;

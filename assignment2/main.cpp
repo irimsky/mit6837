@@ -20,7 +20,8 @@ bool shade_back = false;
 Vec3f calDirectionalLight(const Hit& hit, Light* light)
 {
     Vec3f l, lightCol;
-    light->getIllumination(hit.getIntersectionPoint(), l, lightCol);
+    float distance;
+    light->getIllumination(hit.getIntersectionPoint(), l, lightCol, distance);
     // Vec3f v = camera.getCenter() - hit.getIntersectionPoint();
     Vec3f diffuse = hit.getMaterial()->getDiffuseColor();
 

@@ -11,6 +11,8 @@ class Transform : public Object3D
     Object3D* obj;
 public:
     virtual bool intersect(const Ray& r, Hit& h, float tmin);
+    virtual void paint();
+    
     Transform(Matrix& m, Object3D* o)
     {
         mat = m;

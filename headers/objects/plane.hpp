@@ -11,6 +11,8 @@ class Plane : public Object3D
 {
 public:
     virtual bool intersect(const Ray &r, Hit &h, float tmin);
+    virtual void paint();
+    
     Plane(Vec3f& normal, float d, Material* m)
     {
         this->normal = normal;

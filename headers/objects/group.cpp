@@ -7,7 +7,7 @@ using namespace std;
 bool Group::intersect(const Ray &r, Hit &h, float tmin)
 {
     bool flag = false;
-    for(auto objPtr:objPtrs)
+    for(Object3D* objPtr:objPtrs)
     {
         if(objPtr->intersect(r, h, tmin))
         {
@@ -21,4 +21,13 @@ void Group::addObject(int index, Object3D *obj)
 {
     assert(index >= 0 && index < objPtrs.size() && !objPtrs[index]);
     objPtrs[index] = obj;
+}
+
+
+void Group::paint()
+{
+    for(Object3D* objPtr:objPtrs)
+    {
+        objPtr->paint();
+    }
 }

@@ -12,6 +12,12 @@ class Camera
 public:
     virtual Ray generateRay(Vec2f point) = 0;
     virtual float getTMin() const = 0;
+    
+    virtual void glInit(int w, int h) = 0;
+    virtual void glPlaceCamera(void) = 0;
+    virtual void dollyCamera(float dist) = 0;
+    virtual void truckCamera(float dx, float dy) = 0;
+    virtual void rotateCamera(float rx, float ry) = 0;
 
     Camera() { }
     ~Camera() { }
@@ -34,6 +40,11 @@ public:
     }
 
     virtual Ray generateRay(Vec2f point);
+    virtual void glInit(int w, int h);
+    virtual void glPlaceCamera(void);
+    virtual void dollyCamera(float dist);
+    virtual void truckCamera(float dx, float dy);
+    virtual void rotateCamera(float rx, float ry);
 
     virtual float getTMin() const 
     {
@@ -49,12 +60,10 @@ private:
 
 class PerspectiveCamera : public Camera
 {
-    // for a perspective camera, the field of view is specified with an angle
-    float angle;
 public:
     PerspectiveCamera(Vec3f& center, Vec3f& direction, Vec3f& up, float angle)
     {
-        fov = angle;
+        this->angle = angle;
         this->center = center;
         this->direction = direction; this->direction.Normalize();
         this->up = up; this->up.Normalize();
@@ -63,6 +72,12 @@ public:
     ~PerspectiveCamera();
 
     virtual Ray generateRay(Vec2f point);
+
+    virtual void glInit(int w, int h);
+    virtual void glPlaceCamera(void);
+    virtual void dollyCamera(float dist);
+    virtual void truckCamera(float dx, float dy);
+    virtual void rotateCamera(float rx, float ry);
 
     virtual float getTMin() const
     {
@@ -73,7 +88,7 @@ private:
     Vec3f center;
     Vec3f direction;
     Vec3f up;
-    float fov;
+    float angle;
 };
 
 #endif

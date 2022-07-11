@@ -10,6 +10,7 @@ using namespace std;
 class Group : public Object3D {
 public:
     virtual bool intersect(const Ray &r, Hit &h, float tmin);
+    virtual void paint();
 
     void addObject(int index, Object3D *obj);
 

@@ -6,7 +6,11 @@
 SRCS 	 	= main.cpp \
 		  ../headers/matrix.cpp \
 		  ../headers/image.cpp \
-		  scene_parser.cpp \
+		  ../headers/scene_parser.cpp \
+		  ../headers/light.cpp \
+		  ../headers/material.cpp \
+		  ../headers/global.cpp \
+		  ../headers/glCanvas.cpp \
 		  ../headers/objects/sphere.cpp \
 		  ../headers/objects/plane.cpp \
 		  ../headers/objects/triangle.cpp \
@@ -16,13 +20,15 @@ SRCS 	 	= main.cpp \
 
 # ===============================================================
 
-# LIBS            = -lm -L/usr/X11R6/lib
-INCLUDE 	= -I /usr/local/Cellar/glfw/3.3.7/include \
-			  -I /usr/local/Cellar/glew/2.2.0_1/include
-# include /usr/local/Cellar/glfw/3.3.7/include
+LIBS        = -lm -L/usr/local/Cellar/glfw/3.3.7/lib -L/usr/local/Cellar/glew/2.2.0_1/lib
+INCLUDE 	= -I/usr/local/Cellar/glfw/3.3.7/include \
+			  -I/usr/local/Cellar/glew/2.2.0_1/include \
+
+LDFLAGS= -framework GLUT -framework OpenGL -framework Cocoa 
 CC		= g++
 EXE	  	= raytracer
 OBJS =  $(SRCS:.C=.o)
+
 
 # ===============================================================
 # targets
@@ -32,7 +38,7 @@ OBJS =  $(SRCS:.C=.o)
 all: depend $(EXE)
 
 depend:
-	$(CC) $(INCLUDE) -E -M $(SRCS) > Makefile.depend
+	$(CC) $(LDFLAGS) $(INCLUDE) -E -M $(SRCS) > Makefile.depend
 
 clean: 
 	-rm -f *~ *bak *.o  core.* Makefile.depend $(EXE) 
@@ -41,10 +47,10 @@ clean:
 # compilation rules
 
 $(EXE): $(OBJS)
-	$(CC) $(INCLUDE) -o $@ $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) $(INCLUDE) -o $@ $(OBJS) $(LIBS) -w
 
-.C.o:
-	$(CC) $(INCLUDE) $< -c -o $@
+.cpp.o:
+	$(CC) $(LDFLAGS) $(INCLUDE) $< -c -o $@
 
 # ===============================================================
 
