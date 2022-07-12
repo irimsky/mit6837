@@ -6,17 +6,19 @@
 SRCS 	 	= main.cpp \
 		  ../headers/matrix.cpp \
 		  ../headers/image.cpp \
-		  ../headers/scene_parser.cpp \
+		  scene_parser.cpp \
 		  ../headers/light.cpp \
 		  ../headers/material.cpp \
 		  ../headers/global.cpp \
-		  ../headers/glCanvas.cpp \
+		  glCanvas.cpp \
 		  ../headers/objects/sphere.cpp \
 		  ../headers/objects/plane.cpp \
 		  ../headers/objects/triangle.cpp \
 		  ../headers/objects/transform.cpp \
 		  ../headers/camera.cpp \
-		  ../headers/objects/group.cpp
+		  ../headers/objects/group.cpp \
+		  raytracer.cpp \
+		  rayTree.cpp 
 
 # ===============================================================
 

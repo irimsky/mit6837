@@ -6,11 +6,11 @@
 SRCS 	 	= main.cpp \
 		  ../headers/matrix.cpp \
 		  ../headers/image.cpp \
-		  ../headers/scene_parser.cpp \
+		  scene_parser.cpp \
 		  ../headers/light.cpp \
 		  ../headers/material.cpp \
 		  ../headers/global.cpp \
-		  ../headers/glCanvas.cpp \
+		  glCanvas.cpp \
 		  ../headers/objects/sphere.cpp \
 		  ../headers/objects/plane.cpp \
 		  ../headers/objects/triangle.cpp \

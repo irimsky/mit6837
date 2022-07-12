@@ -6,7 +6,7 @@ using namespace std;
 #include "../headers/camera.hpp"
 #include "../headers/objects/group.hpp"
 #include "../headers/light.hpp"
-#include "../headers/glCanvas.hpp"
+#include "glCanvas.hpp"
 #include "../headers/global.hpp"
 
 #include <OpenGL/gl.h>

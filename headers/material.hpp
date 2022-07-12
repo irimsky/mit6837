@@ -22,7 +22,11 @@ public:
     virtual ~Material() {}
 
     // ACCESSORS
-    virtual Vec3f getDiffuseColor() const { return diffuseColor; }
+    Vec3f getDiffuseColor() const { return diffuseColor; }
+    Vec3f getSpecularColor() const { return specularColor; }
+    Vec3f getTransparentColor() const { return transparentColor; }
+    Vec3f getReflectiveColor() const { return reflectiveColor; }
+    float getIndexOfRefraction() const { return indexOfRefraction; }
 
     virtual Vec3f Shade(const Ray &ray, const Hit &hit, const Vec3f &dirToLight, const Vec3f &lightColor) const = 0;
 
@@ -34,6 +38,14 @@ public:
 protected:
     // REPRESENTATION
     Vec3f diffuseColor;
+    Vec3f specularColor;
+    float exponent;
+    Vec3f reflectiveColor;
+    Vec3f transparentColor;
+    float indexOfRefraction;
+
+    
+
 };
 
 // ====================================================================
@@ -42,12 +54,7 @@ protected:
 class PhongMaterial : public Material
 {
 protected:
-    Vec3f specularColor;
-    float exponent;
-    Vec3f reflectiveColor;
-    Vec3f transparentColor;
-    float indexOfRefraction;
-
+    
 public:
     PhongMaterial(const Vec3f &diffuseColor, const Vec3f &specularColor, float exponent)
     {
@@ -56,7 +63,7 @@ public:
         this->exponent = exponent;
     }
 
-    PhongMaterial::PhongMaterial(const Vec3f &diffuseColor,
+    PhongMaterial(const Vec3f &diffuseColor,
                                  const Vec3f &specularColor,
                                  float exponent,
                                  const Vec3f &reflectiveColor,
@@ -74,7 +81,7 @@ public:
 
     Vec3f Shade(const Ray &ray, const Hit &hit, const Vec3f &dirToLight, const Vec3f &lightColor) const;
     void glSetMaterial() const;
-    Vec3f getSpecularColor() const { return specularColor; }
+    
 };
 
 #endif

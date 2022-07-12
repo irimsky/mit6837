@@ -6,7 +6,8 @@ using namespace std;
 #include "../headers/camera.hpp"
 #include "../headers/objects/group.hpp"
 #include "../headers/light.hpp"
-#include "../headers/glCanvas.hpp"
+#include "glCanvas.hpp"
+#include "raytracer.hpp"
 #include "../headers/global.hpp"
 
 #include <OpenGL/gl.h>
@@ -38,12 +39,6 @@ Vec3f calDirectionalLight(const Hit& hit, Light* light)
     return lightCol * diffuse * max(hit.getNormal().Dot3(l), 0.0f);
 }
 
-Vec3f calAmbientLight(const Hit& hit, const Vec3f& ambient)
-{
-    Vec3f diffuse = hit.getMaterial()->getDiffuseColor();
-    return diffuse * ambient;
-}
-
 void render()
 {
     
@@ -52,49 +47,49 @@ void render()
     Image colorRes(width, height), depthRes(width, height), normalRes(width, height);
     colorRes.SetAllPixels(sceneParser->getBackgroundColor());
 
+    RayTracer rayTracer(sceneParser);
+
     for(int i=0;i<width;++i)
     {
         for(int j=0;j<height;++j)
         {
-            std::cout << i << ' ' << j << std::endl;
+            //std::cout << i << ' ' << j << std::endl;
             Ray r = camera->generateRay(Vec2f((i + 0.5f)/width, (j + 0.5f)/height));
-            cout << r << endl;
+            //cout << r << endl;
             Hit h;
-            if(group->intersect(r, h, camera->getTMin()))
-            {
-                if(h.getNormal().Dot3(r.getDirection()) >= 0)
-                {
-                    if(shade_back)
-                    {
-                        Vec3f normal = h.getNormal();
-                        normal.Negate();
-                        h.set(h.getT(), h.getMaterial(), normal, r);
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                
-                Vec3f sumColor(0, 0, 0);
-                sumColor += calAmbientLight(h, sceneParser->getAmbientLight());
-                for(int i=0;i<sceneParser->getNumLights(); ++i)
-                {
-                    Light* light = sceneParser->getLight(i);
-                    Vec3f p, dirToLight, lightColor;
-                    float distance;
-                    light->getIllumination(p, dirToLight, lightColor, distance);
-                    sumColor +=  h.getMaterial()->Shade(r, h, dirToLight, lightColor); //calDirectionalLight(h, light);
-                }
-                colorRes.SetPixel(j, i, sumColor);
+            Vec3f color = rayTracer.traceRay(r, camera->getTMin(), 0, 1, 1, h);
+            colorRes.SetPixel(j, i, color);
+            float d = (h.getT() - depth_min) / (depth_max - depth_min);
+            d = max(0.0f, min(1.0f, 1.0f-d));
+            depthRes.SetPixel(j, i, Vec3f(d, d, d));
+            normalRes.SetPixel(j, i, h.getNormal());
 
-                float d = (h.getT() - depth_min) / (depth_max - depth_min);
-                d = max(0.0f, min(1.0f, 1.0f-d));
-                depthRes.SetPixel(height - j  - 1, i, Vec3f(d, d, d));
+            // if(group->intersect(r, h, camera->getTMin()))
+            // {
+            //     if(h.getNormal().Dot3(r.getDirection()) >= 0)
+            //     {
+            //         if(shade_back)
+            //         {
+            //             Vec3f normal = h.getNormal();
+            //             normal.Negate();
+            //             h.set(h.getT(), h.getMaterial(), normal, r);
+            //         }
+            //         else
+            //         {
+            //             continue;
+            //         }
+            //     }
 
-                normalRes.SetPixel(height - j  - 1, i, h.getNormal());
-                //cout << "intersect " << h << endl;
-            }
+            //     // Vec3f color = rayTracer.traceRay(r, camera->getTMin(), 0, 0, 1, h);
+            //     // colorRes.SetPixel(j, i, color);
+
+            //     float d = (h.getT() - depth_min) / (depth_max - depth_min);
+            //     d = max(0.0f, min(1.0f, 1.0f-d));
+            //     depthRes.SetPixel(j, i, Vec3f(d, d, d));
+
+            //     normalRes.SetPixel(j, i, h.getNormal());
+            //     //cout << "intersect " << h << endl;
+            // }
             
         }
     }
@@ -104,6 +99,17 @@ void render()
         depthRes.SaveTGA(depth_file);
     if(normal_file != NULL)
         normalRes.SaveTGA(normal_file);
+}
+
+void traceRay(float x, float y)
+{
+    Camera* camera = sceneParser->getCamera();
+	RayTracer raytracer(sceneParser);
+
+	Vec2f point(y, x);
+	Ray rayTemp = camera->generateRay(point);
+	Hit hit_result;
+	Vec3f Color = raytracer.traceRay(rayTemp, camera->getTMin(), 0, 1, 0, hit_result);
 }
 
 int main(int argc, char *argv[])
@@ -170,6 +176,22 @@ int main(int argc, char *argv[])
             assert(i < argc);
             phi_steps = atof(argv[i]);
         }
+        else if (!strcmp(argv[i], "-shadows"))
+        {
+            shadow = true;
+        }
+        else if (!strcmp(argv[i], "-bounces"))
+        {
+            i++;
+            assert(i < argc);
+            max_bounce = atoi(argv[i]);
+        }
+        else if (!strcmp(argv[i], "-weight"))
+        {
+            i++;
+            assert(i < argc);
+            cutoff_weight = atof(argv[i]);
+        }
         else
         {
             printf("whoops error with command line argument %d: '%s'\n", i, argv[i]);
@@ -183,13 +205,14 @@ int main(int argc, char *argv[])
     if(is_gui)
     {
         //cout << "aaa" << endl;
-        canvas.initialize(sceneParser, render);
+        canvas.initialize(sceneParser, render, traceRay);
     }
     else
     {
         render();
     }
+    cout << "deleteParser" << endl;
     delete sceneParser;
-
+    cout << "return 0" << endl;
     return 0;
 }

@@ -49,6 +49,16 @@ public:
         intersectionPoint = ray.pointAtParameter(t);
     }
 
+    void setT(float _t)
+    {
+        t = _t;
+    }
+
+    void setInfT()
+    {
+        setT(9999999.0f);
+    }
+
 private:
     // REPRESENTATION
     float t;
