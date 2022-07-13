@@ -10,9 +10,12 @@ class Triangle : public Object3D
 public:
     Triangle(Vec3f& a, Vec3f& b, Vec3f& c, Material* m);
     ~Triangle();
+
+    void calBoundingBox();
     
     virtual bool intersect(const Ray& r, Hit& h, float tmin);
     virtual void paint();
+    virtual void insertIntoGrid(Grid *g, Matrix *m);
 };
 
 #endif

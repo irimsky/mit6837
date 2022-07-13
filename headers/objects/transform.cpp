@@ -37,3 +37,17 @@ void Transform::paint()
     obj->paint();
     glPopMatrix();
 }
+
+void Transform::insertIntoGrid(Grid * g, Matrix * m)
+{
+    if (!m)
+    {
+        Matrix newm = mat;
+        obj->insertIntoGrid(g, &newm);
+    }
+    else
+    {
+        Matrix newm = (*m) * mat;
+        obj->insertIntoGrid(g, &newm);
+    }
+}

@@ -4,6 +4,7 @@
 #include <OpenGL/gl.h>
 
 const float PI = 3.1415926535;
+#define EPSILON 0.00001
 
 bool Sphere::intersect(const Ray &r, Hit &h, float tmin)
 {
@@ -123,3 +124,53 @@ void Sphere::paint(void)
     }
     glEnd();
 }
+
+void Sphere::insertIntoGrid(Grid *g, Matrix *m) 
+{
+    if (m != NULL) 
+    {
+        Object3D::insertIntoGrid(g, m);
+        return;
+    }
+    Vec3f v = g->getGirdSize();
+    cout << "insert Grid size:" << v << endl;
+    BoundingBox* bb = g->getBoundingBox();
+    Vec3f bbMin = bb->getMin();
+    Vec3f bbMax = Vec3f(bb->getMax().x() + EPSILON, bb->getMax().y() + EPSILON, bb->getMax().z() + EPSILON);
+    int x = v.x();
+    int y = v.y();
+    int z = v.z();
+    Vec3f size = bbMax - bbMin;
+    cout << size << endl;
+    float grid_x = size.x() / x;
+    float grid_y = size.y() / y;
+    float grid_z = size.z() / z;
+    Vec3f cen = center - bbMin;
+    Vec3f _voxel;
+    for (int _i = 0; _i < x; _i++)
+    {
+        cout << _i << "x:\n";
+        float _x1 = (_i + 0.5f) * grid_x;
+        for (int _j = 0; _j < y; _j++)
+        {
+            float _y1 = (_j + 0.5f) * grid_y;
+            for (int _k = 0; _k < z; _k++)
+            {
+                float _z1 = (_k + 0.5f) * grid_z;
+                _voxel.Set(_x1, _y1, _z1);
+                if ((_voxel - cen).Length() <= radius) 
+                {
+                    int id = (_i * y + _j) * z + _k;
+                    g->insertInto(id, this);
+                    // cout << 1 << ' ';
+                }
+                else
+                {
+                    // cout << 0 << ' ';
+                }
+            }
+            cout << endl;
+        }
+    }
+}
+
