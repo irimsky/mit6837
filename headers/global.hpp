@@ -11,3 +11,8 @@ extern int nx;
 extern int ny;
 extern int nz;
 extern bool visualize_grid;
+
+extern bool stats;
+
+extern int num_samples;
+

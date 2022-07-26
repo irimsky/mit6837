@@ -1,6 +1,8 @@
 
 #include "sphere.hpp"
 #include "../global.hpp"
+#include "../raytracing_stats.hpp"
+
 #include <OpenGL/gl.h>
 
 const float PI = 3.1415926535;
@@ -8,6 +10,7 @@ const float PI = 3.1415926535;
 
 bool Sphere::intersect(const Ray &r, Hit &h, float tmin)
 {
+    RayTracingStats::IncrementNumIntersections(); 
     float a = r.getDirection().Dot3(r.getDirection());
     Vec3f tmp = r.getOrigin() - center;
     float b = 2 * tmp.Dot3(r.getDirection());
@@ -116,7 +119,7 @@ void Sphere::paint(void)
                     normal = points[index[i]] - center;
                 }
                 normal.Normalize();
-                glNormal3f(normal.x(), normal.y(), normal.z());
+                glNormal3f(-normal.x(), -normal.y(), -normal.z());
  
                 glVertex3f(points[index[i]].x(), points[index[i]].y(), points[index[i]].z());
             }
@@ -133,7 +136,7 @@ void Sphere::insertIntoGrid(Grid *g, Matrix *m)
         return;
     }
     Vec3f v = g->getGirdSize();
-    cout << "insert Grid size:" << v << endl;
+    // cout << "insert Grid size:" << v << endl;
     BoundingBox* bb = g->getBoundingBox();
     Vec3f bbMin = bb->getMin();
     Vec3f bbMax = Vec3f(bb->getMax().x() + EPSILON, bb->getMax().y() + EPSILON, bb->getMax().z() + EPSILON);
@@ -141,7 +144,7 @@ void Sphere::insertIntoGrid(Grid *g, Matrix *m)
     int y = v.y();
     int z = v.z();
     Vec3f size = bbMax - bbMin;
-    cout << size << endl;
+    // cout << size << endl;
     float grid_x = size.x() / x;
     float grid_y = size.y() / y;
     float grid_z = size.z() / z;
@@ -149,7 +152,7 @@ void Sphere::insertIntoGrid(Grid *g, Matrix *m)
     Vec3f _voxel;
     for (int _i = 0; _i < x; _i++)
     {
-        cout << _i << "x:\n";
+        // cout << _i << "x:\n";
         float _x1 = (_i + 0.5f) * grid_x;
         for (int _j = 0; _j < y; _j++)
         {
@@ -169,7 +172,7 @@ void Sphere::insertIntoGrid(Grid *g, Matrix *m)
                     // cout << 0 << ' ';
                 }
             }
-            cout << endl;
+            // cout << endl;
         }
     }
 }

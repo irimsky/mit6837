@@ -13,3 +13,7 @@ int nx = 0;
 int ny = 0;
 int nz = 0;
 bool visualize_grid = false;
+
+bool stats = false;
+
+int num_samples = 0;

@@ -133,8 +133,10 @@ Ray PerspectiveCamera::generateRay(Vec2f point)
     Vec3f horizon;
     Vec3f::Cross3(horizon, direction, up);
     horizon.Normalize();
-
-    Vec3f temp = direction + 2 * tan(angle / 2) * horizon * (point.x() - 0.5) + 2 * tan(angle / 2) * up * (point.y() - 0.5);
+    float m = 1.0 / tan(angle / 2);
+	  float tanalpha = 1 / sqrt(m * m - 1);
+	  Vec3f temp = direction + 2 * tanalpha * horizon * (point.x() - 0.5) + 2 * tanalpha * up * (point.y() - 0.5);
+    // Vec3f temp = direction + 2 * tan(angle / 2) * horizon * (point.x() - 0.5) + 2 * tan(angle / 2) * up * (point.y() - 0.5);
     temp.Normalize();
     // std::cout << temp << std::endl;
     return Ray(center, temp);

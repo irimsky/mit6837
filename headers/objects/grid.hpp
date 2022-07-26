@@ -3,6 +3,7 @@
 
 #include "object3D.hpp"
 #include "../material.hpp"
+#include "../raytracing_stats.hpp"
 #include <vector>
 
 struct MarchingInfo
@@ -32,7 +33,8 @@ struct MarchingInfo
     void nextCell()
     {
         // https://www.shadertoy.com/view/4dfGzs
-        // RayTracingStats::IncrementNumGridCellsTraversed();
+        RayTracingStats::IncrementNumGridCellsTraversed();
+
         Vec3f dire = Vec3f(dis.x() < min(dis.y(), dis.z()),
                            dis.y() < min(dis.x(), dis.z()),
                            dis.z() < min(dis.x(), dis.y()));
@@ -102,6 +104,9 @@ public:
 
     void insertInto(int id, Object3D *obj);
     void insertInto(int i, int j, int k, Object3D *obj);
+    void insertNonInGridObject(Object3D* obj);
+
+
 
 private:
     int nx;
@@ -109,8 +114,10 @@ private:
     int nz;
     vector<bool> isOpaque;
     vector<vector<Object3D *> > object3ds;
+    vector<Object3D*> nonInGridObjs;
     bool visualize;
     vector<Material*> countColor;
+    
 };
 
 #endif

@@ -1,5 +1,7 @@
 #include "grid.hpp"
-#include "../../assignment5/rayTree.hpp"
+#include "../../assignment7/rayTree.hpp"
+#include "../global.hpp"
+
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
@@ -21,7 +23,23 @@ void Grid::insertInto(int id, Object3D *obj)
 
 bool Grid::intersect(const Ray &r, Hit &h, float tmin)
 {
-    cout << "grid intersect" << endl;
+    // cout << "grid intersect" << endl;
+    
+    // cout << h << endl;
+    bool flag = false;
+    for(Object3D* objPtr:nonInGridObjs)
+    {
+        if(objPtr->intersect(r, h, tmin))
+        {
+            flag = true;
+        }
+    }
+    if(flag)
+    {
+        // cout << "hit plane" << endl;
+    }
+    // cout << h << endl;
+
     MarchingInfo mi;
     initializeRayMarch(mi, r, tmin);
     int count = 5; // if outside of grid twice, abort
@@ -29,14 +47,17 @@ bool Grid::intersect(const Ray &r, Hit &h, float tmin)
     {
         // std::vector<Object3D*>*  temp = getRecord(mi.i, mi.j, mi.k);
         // cout << mi.i << ' ' << mi.j << ' ' << mi.k << endl;
-        mi.Print();
+        // mi.Print();
 
-        if (mi.i < 0 || mi.i >= nx) return false;
-        if (mi.j < 0 || mi.j >= ny) return false;
-        if (mi.k < 0 || mi.k >= nz) return false;
+        if (mi.i < 0 || mi.i >= nx) return flag;
+        if (mi.j < 0 || mi.j >= ny) return flag;
+        if (mi.k < 0 || mi.k >= nz) return flag;
         int id = getID(mi.i, mi.j, mi.k);
         bool temp = isOpaque[id];
-        // cout << temp << endl;
+        // cout << "isOpaque: " << temp << endl;
+        int size = object3ds[id].size();
+
+        // cout << "obj count: " << size << endl;
         // if (!temp)
         // {
         //     count--;
@@ -50,7 +71,6 @@ bool Grid::intersect(const Ray &r, Hit &h, float tmin)
         //         continue;
         //     }
         // }
-        int size = object3ds[id].size();
         // size = min(size, 9);
         Vec3f block = boundingBox->getMax() - boundingBox->getMin();
         block.Divide(nx, ny, nz);
@@ -97,12 +117,34 @@ bool Grid::intersect(const Ray &r, Hit &h, float tmin)
 
         if (temp)
         {
-            h.set(200, material, mi.nor, r);
-            return true;
+            // cout << "ready traverse" << endl;
+            if(visualize_grid)
+            {
+                h.set(200, material, mi.nor, r);
+                return true;
+            }
+            else
+            {
+                bool objHitFlag = false;
+                for(Object3D* objPtr:object3ds[id])
+                {
+                    if(objPtr->intersect(r, h, tmin))
+                    {
+                        objHitFlag = true;
+                        // cout << "hit objects" << endl;
+                    }
+                }
+                // cout << h << endl;
+                if(objHitFlag){
+                    flag = true;
+                    break;
+                } 
+            }
         }
         mi.nextCell();
     }
-    return false;
+    // cout << "if intersect: " << flag << endl;
+    return flag;
 }
 
 void Grid::initializeRayMarch(MarchingInfo &mi, const Ray &r, float tmin) const
@@ -121,7 +163,7 @@ void Grid::initializeRayMarch(MarchingInfo &mi, const Ray &r, float tmin) const
 
     float allMin = max(txmin, max(tymin, tzmin));
     float allMax = min(txmax, min(tymax, tzmax));
-    cout << "allMin Max: " << allMin << ' ' << allMax << endl;
+    // cout << "allMin Max: " << allMin << ' ' << allMax << endl;
     if (allMin > allMax)
     {
         // 没有相交
@@ -129,14 +171,14 @@ void Grid::initializeRayMarch(MarchingInfo &mi, const Ray &r, float tmin) const
 
     Vec3f block = boundingBox->getMax() - boundingBox->getMin();
     block.Divide(nx, ny, nz);
-    cout << "tmin allMin: " << tmin << ' ' << allMin << endl;
-    cout << "block:" << block << endl;
+    // cout << "tmin allMin: " << tmin << ' ' << allMin << endl;
+    // cout << "block:" << block << endl;
     mi.tmin = max(tmin, allMin);
-    cout << ".pointAtParameter(mi.tmin):" << r.pointAtParameter(mi.tmin) << endl;
+    // cout << ".pointAtParameter(mi.tmin):" << r.pointAtParameter(mi.tmin) << endl;
     Vec3f pos = (r.pointAtParameter(mi.tmin) - boundingBox->getMin());
-    cout << "before pos:" << pos << endl;
+    // cout << "before pos:" << pos << endl;
     pos.Divide(block.x(), block.y(), block.z());
-    cout << "after pos:" << pos << endl;
+    // cout << "after pos:" << pos << endl;
     if(pos.x() < EPLISON)
     {
         pos += Vec3f(EPLISON, 0, 0);
@@ -265,6 +307,11 @@ void Grid::paint()
         }
         // cout << endl;
     }
+}
+
+void Grid::insertNonInGridObject(Object3D* obj)
+{
+    nonInGridObjs.push_back(obj);
 }
 
 void Grid::insertIntoGrid(Grid *g, Matrix *m)

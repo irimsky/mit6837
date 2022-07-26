@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
         {
             std::cout << i << ' ' << j << std::endl;
             Ray r = camera->generateRay(Vec2f((i + 0.5f)/width, (j + 0.5f)/height));
-            cout << r << endl;
+            // cout << r << endl;
             Hit h;
             if(group->intersect(r, h, camera->getTMin()))
             {

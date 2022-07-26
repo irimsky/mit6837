@@ -29,6 +29,7 @@ void Triangle::calBoundingBox()
 
 bool Triangle::intersect(const Ray& r, Hit& h, float tmin)
 {
+    RayTracingStats::IncrementNumIntersections(); 
     // 重心坐标
     float belta, gamma, t;
     float A;

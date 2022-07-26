@@ -84,4 +84,67 @@ public:
     
 };
 
+class Checkerboard : public Material
+{
+    Matrix *mat;
+    Material *material1, *material2;
+public:
+    Checkerboard(Matrix *m, Material *mat1, Material *mat2) : Material(Vec3f(1,1,1)), mat(m), material1(mat1), material2(mat2) {};
+    Vec3f Shade(const Ray &ray, const Hit &hit, const Vec3f &dirToLight, const Vec3f &lightColor) const;
+    void glSetMaterial(void) const;
+    Vec3f getSpecularColor() const { return material1->getSpecularColor(); }
+    Vec3f getRedlectiveColor() const { return material1->getReflectiveColor(); }
+    Vec3f getTransparentColor() const { return material1->getTransparentColor(); }
+    float getIndexOfRef()const { return material1->getIndexOfRefraction(); }
+};
+
+class Noise : public Material
+{
+    int octaves;
+    Matrix *mat;
+    Material *material1, *material2;
+public:
+    static float NoiseCalculate(Vec3f pos, int octaves);
+    Noise(Matrix *m, Material *mat1, Material *mat2, int _octaves) : Material(Vec3f(1,1,1)), mat(m), material1(mat1), material2(mat2), octaves(_octaves){};
+    Vec3f Shade(const Ray &ray, const Hit &hit, const Vec3f &dirToLight, const Vec3f &lightColor) const;
+    void glSetMaterial(void) const;
+    Vec3f getSpecularColor() const { return material1->getSpecularColor(); }
+    Vec3f getRedlectiveColor() const { return material1->getReflectiveColor(); }
+    Vec3f getTransparentColor() const { return material1->getTransparentColor(); }
+    float getIndexOfRef()const { return material1->getIndexOfRefraction(); }
+};
+
+class Marble : public Material
+{
+    int octaves;
+    Matrix *mat;
+    Material *material1, *material2;
+    float frequency;
+    float amplitude;
+public:
+    Marble(Matrix *m, Material *mat1, Material *mat2, int _octaves, float _frequency, float _amplitude) 
+        : Material(Vec3f(1,1,1)), mat(m), material1(mat1), material2(mat2), octaves(_octaves), frequency(_frequency), amplitude(_amplitude) {};
+    Vec3f Shade(const Ray &ray, const Hit &hit, const Vec3f &dirToLight, const Vec3f &lightColor) const;
+    void glSetMaterial(void) const;
+    Vec3f getSpecularColor() const { return material1->getSpecularColor(); }
+    Vec3f getRedlectiveColor() const { return material1->getReflectiveColor(); }
+    Vec3f getTransparentColor() const { return material1->getTransparentColor(); }
+    float getIndexOfRef()const { return material1->getIndexOfRefraction(); }
+};
+
+
+class Wood : public Material
+{
+    int octaves;
+    Matrix *mat;
+    Material *material1, *material2;
+    float frequency;
+    float amplitude;
+public:
+    Wood(Matrix *m, Material *mat1, Material *mat2, int _octaves, float _frequency, float _amplitude) 
+    : Material(Vec3f(1,1,1)), mat(m), material1(mat1), material2(mat2), octaves(_octaves), frequency(_frequency), amplitude(_amplitude) {};
+    virtual Vec3f Shade(const Ray &ray, const Hit &hit, const Vec3f &dirToLight, const Vec3f &lightColor) const;
+    virtual void glSetMaterial(void) const;
+};
+
 #endif

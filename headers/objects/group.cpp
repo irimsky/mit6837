@@ -25,8 +25,10 @@ void Group::addObject(int index, Object3D *obj)
     
     if(boundingBox == NULL)
     {
-        boundingBox = new BoundingBox(obj->getBoundingBox()->getMin(), obj->getBoundingBox()->getMax());
-        boundingBox->Print();
+        if(obj->getBoundingBox()){
+            boundingBox = new BoundingBox(obj->getBoundingBox()->getMin(), obj->getBoundingBox()->getMax());
+            boundingBox->Print();
+        }
     }
     else
     {
